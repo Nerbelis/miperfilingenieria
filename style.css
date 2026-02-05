@@ -151,19 +151,21 @@ input, textarea {
     box-sizing: border-box; /* Evita que los campos se salgan del borde */
 }
 
-/* Estilo para el botón de enviar */
+/* Estilo para el botón de enviar (Azul Profesional) */
 button[type="submit"] {
     width: 100%;
-    background-color: #007bff; /* Azul profesional */
+    background-color: #005080; /* El azul oscuro que elegimos */
     color: white;
     padding: 12px;
     border: none;
     border-radius: 8px;
     font-weight: bold;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: background 0.3s ease, transform 0.2s;
 }
 
+/* Efecto cuando pasas el mouse por encima */
 button[type="submit"]:hover {
-    background-color: #0056b3; /* Se oscurece al pasar el mouse */
+    background-color: #003d60; /* Se oscurece un poco al tocarlo */
+    transform: scale(1.02); /* Crece un poquito para dar feedback */
 }
