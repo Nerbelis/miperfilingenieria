@@ -1,0 +1,131 @@
+.profile-img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%; /* Hace la foto redonda */
+    object-fit: cover;    /* Evita que la foto se estire */
+    border: 4px solid #0056b3; /* Borde azul de ingeniería */
+    display: block;
+    margin: 20px auto;   /* Centra la foto */
+}
+
+.site-header {
+    text-align: center;  /* Centra el nombre y la biografía */
+    padding: 30px;
+    background-color: #f4f4f4;
+}
+.skills-container {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px; 
+}
+
+.tag {
+    background-color: #0056b3; 
+    color: white;
+    padding: 5px 15px;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+#nombre {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    margin-top: 15px;
+}
+#nombre {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    margin-top: 15px;
+}
+.contacto-container {
+    margin-top: 40px;
+    padding: 20px;
+    border-top: 1px solid #ddd;
+}
+
+.contacto-container h3 {
+    font-family: Arial, sans-serif;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.btn-contacto {
+    display: inline-block;
+    padding: 12px 25px;
+    margin: 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    font-family: sans-serif;
+    transition: 0.3s;
+}
+
+.whatsapp {
+    background-color: #25d366;
+    color: white;
+}
+
+.btn-contacto {
+    background-color: #0056b3;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+.btn-contacto:hover {
+    opacity: 0.8;
+    transform: translateY(-3px);
+}
+.btn-contacto i {
+    margin-right: 10px; /* Separa el icono del texto */
+    font-size: 1.2rem;   /* Hace el icono un poco más grande */
+}
+
+.whatsapp {
+    background-color: #25d366 !important; /* Color oficial de WhatsApp */
+}
+.productos-grid {
+    display: flex;
+    flex-wrap: wrap; /* Esto hace que si no caben 10 en fila, bajen automáticamente */
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+.producto-card {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 15px;
+    width: 280px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.foto-producto {
+    width: 100%;
+    height: 200px;
+    object-fit: cover; /* Evita que la foto se vea estirada */
+    border-radius: 10px;
+}
+
+.btn-compra {
+    display: block;
+    background-color: #25d366; /* Verde WhatsApp */
+    color: white;
+    padding: 10px;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+.productos-grid {
+    display: flex;
+    flex-wrap: wrap; /* Permite que los productos "salten" a la siguiente fila */
+    justify-content: center; /* Los centra todos */
+    gap: 20px; /* Deja un espacio de 20px entre cada tarjeta */
+}

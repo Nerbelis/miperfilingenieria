@@ -1,0 +1,57 @@
+.\*{box-sizing:border-box}
+html,body{height:100%}
+body{font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;background:linear-gradient(180deg,#f4f7fb 0%,#eef6ff 100%);color:#0b2545;margin:0;display:flex;flex-direction:column;min-height:100vh}
+.container{max-width:1000px;margin:28px auto;padding:0 20px;width:100%}
+.site-header{background:transparent;padding:18px 0}
+.header-inner{display:flex;justify-content:space-between;align-items:center}
+.brand{font-weight:700;letter-spacing:0.2px;margin:0}
+.nav a{margin-left:18px;color:#0b2545;text-decoration:none;font-weight:600}
+.card{background:#ffffff;border-radius:16px;padding:28px;margin-bottom:22px;box-shadow:0 12px 36px rgba(11,37,69,0.08);border:1px solid rgba(11,37,69,0.03)}
+.hero{display:flex;gap:26px;align-items:center}
+.avatar{width:140px;height:140px;border-radius:18px;object-fit:cover;flex:0 0 140px;box-shadow:0 12px 30px rgba(11,37,69,0.08)}
+.info h2{margin:0;font-size:1.6rem}
+.info p.lead{margin:10px 0;color:#324155;line-height:1.5}
+.section{display:block}
+.grid{display:grid;grid-template-columns:1fr 2fr;gap:20px;align-items:start}
+@media (max-width:900px){
+	.hero{flex-direction:column;align-items:flex-start}
+	.grid{grid-template-columns:1fr}
+}
+.skills{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.badge{background:#ffffff;color:#0b2545;padding:8px 14px;border-radius:999px;font-weight:700;box-shadow:0 8px 22px rgba(11,37,69,0.08);border:1px solid rgba(11,37,69,0.04);display:inline-flex;align-items:center}
+.section h3{margin-top:0;margin-bottom:8px}
+.contact-list{list-style:none;padding:0;margin:0}
+.contact-list li{padding:12px 0;border-top:1px solid rgba(11,37,69,0.04)}
+.contact-list a{color:#0b2545;text-decoration:none}
+.site-footer{padding:18px 0;text-align:center;color:#6b7a90;margin-top:auto}
+.small{font-size:0.95rem;color:#546179}
+
+/* Utilities */
+.muted{color:#7b89a3}
+.section .card-sub{background:transparent;padding:0;margin:0}
+.hero .info{min-width:0}
+.hero .info p small{color:#7b89a3}
+
+/* Make sure lists and long text wrap nicely */
+img{max-width:100%;height:auto}
+
+/* Focus states */
+a:focus{outline:2px solid rgba(49,130,206,0.18);outline-offset:2px}
+
+/* Responsive tweaks for very small screens */
+@media (max-width:480px){
+	.avatar{width:110px;height:110px;flex:0 0 110px}
+	.card{padding:20px}
+}
+/* Esto separará tus habilidades y les dará forma de etiquetas */
+.tag {
+    display: inline-block;
+    background-color: #eef6ff; /* Un azul clarito */
+    color: #123e6b;           /* Texto azul oscuro */
+    padding: 6px 12px;        /* Espacio interno */
+    margin: 5px;              /* ¡Esto es lo que las separa! */
+    border-radius: 20px;      /* Bordes redondeados */
+    font-size: 0.9rem;
+    font-weight: bold;
+    border: 1px solid #d0e3ff;
+}
