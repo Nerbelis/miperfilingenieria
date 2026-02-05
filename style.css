@@ -129,3 +129,40 @@
     justify-content: center; /* Los centra todos */
     gap: 20px; /* Deja un espacio de 20px entre cada tarjeta */
 }
+/* --- ESTILOS PARA EL FORMULARIO Y BOTONES (LÍNEA 132+) --- */
+
+form {
+    max-width: 500px;    /* Hace que el formulario sea más angosto y estético */
+    margin: 40px auto;   /* Lo separa de arriba y lo centra horizontalmente */
+    padding: 25px;       /* Espacio interno para que no esté todo pegado */
+    background-color: #ffffff; 
+    border-radius: 12px; /* Bordes redondeados modernos */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1); /* Sombra suave para que resalte */
+}
+
+/* Estilo para los campos de entrada */
+input, textarea {
+    width: 100%;         /* Se ajustan al nuevo ancho del formulario */
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box; /* Evita que los campos se salgan del borde */
+}
+
+/* Estilo para el botón de enviar */
+button[type="submit"] {
+    width: 100%;
+    background-color: #007bff; /* Azul profesional */
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3; /* Se oscurece al pasar el mouse */
+}
