@@ -135,7 +135,8 @@ form {
     max-width: 500px;    /* Hace que el formulario sea más angosto y estético */
     margin: 40px auto;   /* Lo separa de arriba y lo centra horizontalmente */
     padding: 25px;       /* Espacio interno para que no esté todo pegado */
-    background-color: #ffffff; 
+    background-color: #f0f7f4; 
+    border: 2px solid #25d366; /* Borde azul profesional */
     border-radius: 12px; /* Bordes redondeados modernos */
     box-shadow: 0 5px 15px rgba(0,0,0,0.1); /* Sombra suave para que resalte */
 }
