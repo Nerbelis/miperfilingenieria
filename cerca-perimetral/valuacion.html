@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema de Valuaciones COVENIN</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    
+    <style>
+        :root { --primary: #002e5d; --gold: #b8860b; --bg: #f4f7f6; }
+        body { font-family: 'Helvetica', Arial, sans-serif; background: var(--bg); padding: 40px; }
+        .container { background: white; max-width: 850px; margin: auto; padding: 40px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); border-top: 8px solid var(--primary); }
+        .header-main { text-align: center; margin-bottom: 30px; }
+        .header-main h1 { color: var(--primary); margin: 0; font-size: 22px; text-transform: uppercase; letter-spacing: 1px; }
+        .header-main p { color: var(--gold); font-weight: bold; margin-top: 5px; }
+        
+        .input-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; background: #f9f9f9; padding: 20px; border-radius: 5px; }
+        label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 5px; color: #555; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { background: var(--primary); color: white; padding: 12px; text-align: left; font-size: 13px; }
+        td { border-bottom: 1px solid #eee; padding: 12px; font-size: 13px; }
+        .total-box { text-align: right; padding: 20px; font-size: 18px; font-weight: bold; color: var(--primary); }
+        
+        #area-pago { display: none; margin-top: 30px; border-top: 2px dashed #ccc; padding-top: 20px; text-align: center; }
+        .btn-calc { background: var(--primary); color: white; border: none; padding: 15px 30px; width: 100%; font-weight: bold; cursor: pointer; border-radius: 4px; transition: 0.3s; }
+        .btn-calc:hover { background: #004a96; }
+    </style>
+</head>
+<body>
+    <div style="text-align: center; padding: 20px; background-color: #f4f7f6; border-bottom: 3px solid #007bff;">
+    <h1 style="color: #333;">Sistema Inteligente de Valuaciones Técnicas</h1>
+    <h2 style="color: #007bff;">🚧 Módulo: Cerca Perimetral (Norma COVENIN)</h2>
+    <p>Ing. Civil e Informática Nerbelis Valdeblanques | CIV: 310409</p>
+</div>
+
+<div style="max-width: 800px; margin: 20px auto; padding: 15px; border-left: 5px solid #28a745; background-color: #e9f7ef;">
+    <strong>¿Qué incluye esta valuación?</strong>
+    <ul style="margin: 5px 0;">
+        <li>Cómputos métricos exactos de Excavación, Concreto, Paredes y Friso.</li>
+        <li>Cálculo automatizado de materiales según dimensiones de la obra.</li>
+        <li>Certificación técnica en PDF lista para imprimir.</li>
+    </ul>
+    <p style="font-size: 0.9em; color: #666;">* Costo del servicio: <b>$10.00 USD</b> (Pago seguro vía PayPal)</p>
+</div>
+
+<div class="container">
+    <div class="header-main">
+        <h1>Sistema de Valuación de Obras Civiles</h1>
+        <p>Normativa Venezolana COVENIN 2000-87</p>
+    </div>
+
+    <div class="input-row">
+        <div>
+            <label>LONGITUD DE CERCA (M)</label>
+            <input type="number" id="largo" value="20" step="0.1">
+        </div>
+        <div>
+            <label>ALTURA TOTAL (M)</label>
+            <input type="number" id="alto" value="2.5" step="0.1">
+        </div>
+        <div>
+            <label>TIPO DE BLOQUE</label>
+            <select id="tipoBloque">
+                <option value="12.5">Cemento 15cm (E-351)</option>
+                <option value="17">Arcilla 15cm (E-351)</option>
+            </select>
+        </div>
+    </div>
+
+    <button class="btn-calc" onclick="generarValuacion()">GENERAR CÓMPUTOS Y VALUACIÓN</button>
+
+    <div id="resultado-obra" style="display:none;">
+        <table id="tabla-valuacion">
+            <thead>
+                <tr>
+                    <th>PARTIDA</th>
+                    <th>DESCRIPCIÓN</th>
+                    <th>UNID.</th>
+                    <th>CANT.</th>
+                    <th>P.U ($)</th>
+                    <th>TOTAL</th>
+                </tr>
+            </thead>
+            <tbody id="cuerpo-tabla"></tbody>
+        </table>
+        <div class="total-box" id="monto-total"></div>
+
+        <div id="area-pago" style="display:none; margin-top: 30px; border-top: 2px dashed #ccc; padding-top: 20px; text-align: center;">
+            <button onclick="generarPDFDirecto()" style="width:100%; background-color: #28a745; color: white; padding: 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-bottom: 15px;">
+                👁️ DESCARGAR REPORTE (VISTA PREVIA INGENIERO)
+            </button>
+            <h4 style="color: var(--gold);">✓ Valuación Generada Exitosamente</h4>
+            <p>Para descargar el reporte oficial en PDF con el <b>Listado de Insumos (Materiales)</b> detallado, procesa el pago de certificación:</p>
+            <div id="paypal-button-container"></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://www.paypal.com/sdk/js?client-id=AVENvr04fvsjtCX1mw9B75602y2DPDWokkTrVg6yVprbupPhrrKzozUw-ekQfn_prUPkCTInrZMP_cZm&currency=USD"></script>
+
+<script>
+const PRECIOS_VENEZUELA = { excav: 12.5, conc: 165.0, pared: 22.0, friso: 7.5 };
+
+function generarValuacion() {
+    const L = parseFloat(document.getElementById('largo').value);
+    const H = parseFloat(document.getElementById('alto').value);
+    const FB = parseFloat(document.getElementById('tipoBloque').value);
+
+    // CÓMPUTOS COVENIN
+    let qExcav = (L * 0.40 * 0.50);
+    let nCol = Math.ceil(L / 2.5) + 1;
+    let qConc = ((L * 0.15 * 0.20) * 2) + (nCol * (0.15 * 0.20 * H));
+    let qPared = L * H;
+    let qFriso = qPared * 2;
+   // // CÓMPUTOS DE MATERIALES DE CONSUMO (Estimaciones técnicas)
+    let kgAlambre = (L * 0.15); // Estimamos 0.15kg de alambre por metro lineal
+    let qEncofrado = qConc * 12; // IMPORTANTE: Definimos esto PRIMERO (12m2 por m3 de concreto)
+    let kgClavos = (qEncofrado * 0.20); // Ahora sí podemos usar qEncofrado aquí
+    // Cálculo de insumos para la lista de compras
+     window.totalSacosCem = Math.ceil(qConc * 8.5); // 8.5 sacos por m3 de concreto
+      window.totalArena = (qConc * 0.45).toFixed(2);
+     window.totalPiedra = (qConc * 0.85).toFixed(2);
+    const partidas = [
+    { cod: "E311.111", d: "Excavación a mano para fundaciones", u: "m3", q: qExcav, p: PRECIOS_VENEZUELA.excav },
+    { cod: "E321.112", d: "Concreto f'c 210 kgf/cm2 en vigas y machones", u: "m3", q: qConc, p: PRECIOS_VENEZUELA.conc },
+    { cod: "E351.110", d: "Pared de bloques (inc. transporte y mezcla)", u: "m2", q: qPared, p: PRECIOS_VENEZUELA.pared },
+    { cod: "E341.101", d: "Friso acabado liso (Cemento-Arena)", u: "m2", q: qFriso, p: PRECIOS_VENEZUELA.friso },
+    { cod: "E331.101", d: "Alambre de acero dulce (amarre)", u: "kg", q: kgAlambre, p: 4.5 },
+    { cod: "E331.102", d: "Clavos de acero para madera", u: "kg", q: kgClavos, p: 4.0 },
+    { cod: "E341.105", d: "Encofrado y Desencofrado de madera", u: "m2", q: qEncofrado, p: 12.0 },
+    { cod: "MO-001", d: "MANO DE OBRA (ALBAÑIL Y AYUDANTE)", u: "DÍA", q: Math.ceil(L / 4), p: 35.00 },
+    { cod: "MO-002", d: "LIMPIEZA FINAL Y BOTE DE ESCOMBROS", u: "GLB", q: 1, p: 50.00 }
+]; // Agregamos estas partidas de materiales de consumo a la lista principal
+     
+    let html = "";
+    let total = 0;
+    partidas.forEach(p => {
+        let sub = p.q * p.p;
+        total += sub;
+        html += `<tr><td>${p.cod}</td><td>${p.d}</td><td>${p.u}</td><td>${p.q.toFixed(2)}</td><td>${p.p.toFixed(2)}</td><td>$${sub.toFixed(2)}</td></tr>`;
+    });
+     window.partidasCalculadas = partidas;
+    document.getElementById('cuerpo-tabla').innerHTML = html;
+    document.getElementById('monto-total').innerHTML = `MONTO TOTAL VALUADO: $${total.toFixed(2)}`;
+    document.getElementById('resultado-obra').style.display = 'block';
+    document.getElementById('area-pago').style.display = 'block';
+
+    initPayPal(total, partidas);
+}
+
+function initPayPal(monto, datos) {
+    document.getElementById('paypal-button-container').innerHTML = '';
+    paypal.Buttons({
+        createOrder: (data, actions) => {
+            return actions.order.create({
+                purchase_units: [{ amount: { value: '10.00' }, description: "Certificación de Valuación COVENIN" }]
+            });
+        },
+        onApprove: (data, actions) => {
+            return actions.order.capture().then(detalles => {
+                alert("Pago certificado. Generando PDF...");
+                descargarPDF(datos);
+            });
+        }
+    }).render('#paypal-button-container');
+}
+
+function descargarPDF(partidas) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    doc.setFontSize(18);
+    doc.text("REPORTE TÉCNICO DE OBRA", 105, 20, { align: "center" });
+    doc.setFontSize(10);
+    doc.text("Normativa COVENIN - Cerca Perimetral", 105, 28, { align: "center" });
+
+    const columns = ["CÓDIGO", "PARTIDA", "UNID", "CANT", "P.U ($)", "TOTAL"];
+    const rows = partidas.map(p => [p.cod, p.d, p.u, p.q.toFixed(2), p.p.toFixed(2), (p.q * p.p).toFixed(2)]);
+
+    doc.autoTable({ head: [columns], body: rows, startY: 40 });
+
+    const finalY = (doc.lastAutoTable && doc.lastAutoTable.finalY) ? doc.lastAutoTable.finalY + 15 : 150;
+
+    doc.setFontSize(10);
+    doc.text("Valuación técnica generada bajo los estándares COVENIN", 15, finalY);
+
+    // LISTA DE COMPRAS
+    doc.setFontSize(12);
+    doc.setTextColor(184, 134, 11);
+    doc.text("LISTA DE COMPRAS ESTIMADA (INSUMOS):", 14, finalY + 10);
+
+    doc.setFontSize(10);
+    doc.setTextColor(0, 0, 0);
+    doc.text(`- Cemento Gris: ${window.totalSacosCem || 0} sacos aprox.`, 14, finalY + 18);
+    doc.text(`- Arena Lavada: ${window.totalArena || 0} m3`, 14, finalY + 24);
+    doc.text(`- Piedra Picada: ${window.totalPiedra || 0} m3`, 14, finalY + 30);
+
+    // FIRMA Y DATOS (bloque único)
+    const posFirmaY = finalY + 40;
+
+    // Recuadro para el sello (derecha)
+    doc.setDrawColor(184, 134, 11);
+    doc.setLineWidth(0.5);
+    doc.rect(135, posFirmaY, 45, 35);
+
+    // Imagen del sello (si está disponible)
+    try {
+        doc.addImage('sello-profesional.png', 'PNG', 137, posFirmaY + 5, 40, 30);
+    } catch (e) {
+        // imagen no encontrada; continuar sin ella
+    }
+
+    // Texto del sello (derecha)
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "bold");
+    doc.text("Ing. Civil e Informática", 135, posFirmaY + 42);
+    doc.text("NERBELIS VALDEBLANQUES", 135, posFirmaY + 47);
+    
+
+    // Línea y firma (izquierda)
+    doc.setDrawColor(0, 0, 0);
+    doc.line(20, posFirmaY + 15, 80, posFirmaY + 15);
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "bold");
+    doc.text("ING. NERBELIS VALDEBLANQUES", 20, posFirmaY + 25);
+    doc.setFontSize(8);
+    doc.text("CIV: 310409", 20, posFirmaY + 30);
+    // Guardar PDF
+    doc.save("Valuacion_Obra_Cerca_Perimetral.pdf");
+}
+function generarPDFDirecto() {
+    // Esta función fuerza la descarga usando los datos que ya están en pantalla
+    if (typeof descargarPDF === 'function') {
+        // Llamamos a la función original que ya tienes configurada
+        // Usamos la variable global 'partidas' que se creó al darle al botón azul
+        descargarPDF(window.partidasCalculadas || []); 
+    } else {
+        alert("Error: La función de PDF no está lista.");
+    }
+}
+</script>
+
+</body>
+</html>
