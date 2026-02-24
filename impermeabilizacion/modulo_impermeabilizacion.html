@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>SISTEMA INTELIGENTE - EVALUACIONES</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <!-- PayPal SDK se carga dinámicamente en tiempo de ejecución (para permitir client-id sandbox/real) -->
+    <style>
+        /* Layout adaptativo para evitar solapamientos al mostrar paneles grandes */
+        body { background: #f0f2f5; font-family: Arial, sans-serif; padding-top: 50px; margin: 0; }
+        .card { background: white; width: 92%; max-width: 920px; margin: 0 auto; padding: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-top: 4px solid #003366; box-sizing: border-box; }
+        h5 { color: #003366; font-size: 14px; margin-bottom: 15px; text-align: center; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        label { font-size: 11px; font-weight: bold; color: #666; display: block; margin-top: 10px; }
+        input, select { width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 13px; }
+        .btn { width: 100%; padding: 10px; margin-top: 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .hidden { display: none !important; }
+        #paypal-button-container { margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h5>SISTEMA INTELIGENTE DE VALUACIONES TECNICAS
+      <h5> MODULO: IMPERMEABILIZACION</h5>  
+        DATOS PARA CÓMPUTOS (Normas COVENIN)</h5>
+    
+    <div id="paso1">
+        <label>NOMBRE DEL CLIENTE:</label>
+        <input type="text" id="cliente" placeholder="Ej: Juan Pérez">
+        
+        <label>ÁREA A TRATAR (m²):</label>
+        <input type="number" id="area" placeholder="0.00">
+        
+        <label>TIPO DE SISTEMA (seleccione primero):</label>
+        <select id="tipo_sistema" onchange="tipoSistemaCambio()">
+            <option value="frio">Frío</option>
+            <option value="caliente">Caliente</option>
+        </select>
+        
+        <label>TIPO DE SUPERFICIE:</label>
+        <select id="superficie">
+            <option value="losa">Losa</option>
+            <option value="madera">Madera</option>
+            <option value="lamina">Lámina de zinc</option>
+        </select>
+
+        <!-- El selector 'MODO' fue eliminado: ahora `TIPO DE SISTEMA` controla el flujo -->
+
+        <div id="opciones-frio" class="hidden">
+            <label>Material (frío):</label>
+            <select id="material_frio" onchange="frioMaterialCambio()">
+                <option value="emulsion_asfaltica">Emulsión asfáltica</option>
+                <option value="poliuretano_liquido">Poliuretano líquido</option>
+                <option value="acrilicos">Acrílicos</option>
+                <option value="membrana_liquida">Membrana líquida</option>
+            </select>
+
+            <label>Capas recomendadas:</label>
+            <input type="number" id="capas_frio" placeholder="Ej: 2">
+
+            <label>Tiempo de secado entre capas (hrs):</label>
+            <input type="text" id="tiempo_secado" placeholder="Ej: 6 horas">
+            
+            <label>Espesor objetivo (mm):</label>
+            <select id="frio_espesor">
+                <option value="2">2 mm</option>
+                <option value="3">3 mm</option>
+                <option value="4" selected>4 mm</option>
+                <option value="5">5 mm</option>
+            </select>
+        </div>
+
+        <div id="opciones-caliente" class="hidden">
+            <label>Tipo de manto (caliente):</label>
+            <input type="text" id="manto_caliente" placeholder="Ej: Manto asfáltico 4mm">
+            <button class="btn" style="margin-top:6px; background:#17a2b8; color:#fff;" onclick="abrirModalManto()">DETALLES DE MANTO (mm / método / equipo)</button>
+
+            <label>Método de aplicación (caliente):</label>
+            <input type="text" id="metodo_aplicacion" placeholder="Ej: Soplete">
+
+            <!-- Campo 'Solape' principal (reintegrado): necesario para cálculos según norma COVENIN -->
+            <label>Solape recomendado (cm):</label>
+            <select id="solape">
+                <option value="8">8 cm</option>
+                <option value="10" selected>10 cm</option>
+                <option value="12">12 cm</option>
+            </select>
+
+            <label>Equipo de seguridad (caliente):</label>
+            <input type="text" id="equipo_seguridad" placeholder="Ej: Protector facial, guantes">
+        </div>
+
+        <label>SISTEMA:</label>
+        <select id="sistema">
+            <option value="Manto Asfáltico 4mm">Manto Asfáltico 4mm</option>
+            <option value="Poliuretano Líquido">Poliuretano Líquido</option>
+        </select>
+
+        <button class="btn btn-primary" onclick="irAPago()">GENERAR EVALUACIÓN</button>
+        <button class="btn" style="background:#6c757d; color:#fff; margin-top:8px;" onclick="previsualizarPresupuesto()">VER PREVISUALIZACIÓN</button>
+    </div>
+
+    <div id="preview" class="hidden" style="margin-top:12px;">
+        <h5>PREVISUALIZACIÓN DE PRESUPUESTO</h5>
+        <div id="preview-content" style="font-size:13px; background:#fff; border:1px solid #ddd; padding:10px; border-radius:6px;"></div>
+        <div id="preview-warning" style="color:#a00; font-size:12px; margin-top:8px; display:none;"></div>
+        <div style="display:flex; gap:8px; margin-top:8px;">
+            <button class="btn btn-primary" onclick="descargarPDF()">EXPORTAR A PDF</button>
+            <button class="btn" style="background:#6c757d; color:#fff;" onclick="exportCSV()">EXPORTAR CSV/Excel</button>
+            <button class="btn" style="background:#ffc107; color:#000;" onclick="abrirConfigEditor()">EDITAR CONFIGURACIÓN PARTIDAS</button>
+            <button class="btn" style="background:#eee;" onclick="cerrarPreview()">CERRAR PREVISUALIZACIÓN</button>
+        </div>
+    </div>
+
+    <div id="config-editor" class="hidden" style="margin-top:12px;">
+        <h5>CONFIGURACIÓN DE PARTIDAS (JSON)</h5>
+                <textarea id="config-json" style="width:100%; height:240px; font-size:12px;">{
+    "partidas": {
+        "preparacion": { "codigo": "E410", "descripcion": "Preparación de superficie (limpieza, reparación de fisuras)", "pu": { "losa": 3.50, "madera": 4.00, "lamina": 3.00 } },
+        "impermeabilizacion": { "codigo": "E411", "descripcion": "Impermeabilización - aplicación (según modo)", "pu": { "default": 18.00 } },
+        "materialFrio": { "codigo": "E414", "descripcion": "Material sistema en frío", "pu": { "emulsion_asfaltica": 1.50, "poliuretano_liquido": 5.00, "acrilicos": 2.50, "membrana_liquida": 4.00 } },
+        "mantoCaliente": { "codigo": "E413", "descripcion": "Manto (caliente)", "pu": { "default": 0.00 } },
+        "honorarios": { "codigo": "HON-01", "descripcion": "Honora. Profesi. Consultoria Automatizada", "pu": { "default": 10.00 } }
+    },
+                "sistemas_frios": {
+        "emulsion_asfaltica": { "consumo_por_m2_por_capa": 0.18, "capas_recomendadas": 2, "tiempo_secado_horas": 6 },
+        "poliuretano_liquido": { "consumo_por_m2_por_capa": 0.25, "capas_recomendadas": 2, "tiempo_secado_horas": 12 },
+        "acrilicos": { "consumo_por_m2_por_capa": 0.20, "capas_recomendadas": 2, "tiempo_secado_horas": 6 },
+        "membrana_liquida": { "consumo_por_m2_por_capa": 0.30, "capas_recomendadas": 2, "tiempo_secado_horas": 8 }
+    },
+    "espesores": {
+        "2": 0.85,
+        "3": 0.95,
+        "4": 1.00,
+        "5": 1.15
+    }
+}</textarea>
+        <div style="display:flex; gap:8px; margin-top:8px;">
+            <button class="btn btn-primary" onclick="guardarConfigEdits()">GUARDAR CONFIG</button>
+            <button class="btn" style="background:#eee;" onclick="cerrarConfigEditor()">CERRAR</button>
+        </div>
+    </div>
+
+    <!-- Modal: Detalles del manto (basado en valores recomendados y editable) -->
+    <div id="modal-manto" class="hidden" style="position:fixed; left:0; top:0; right:0; bottom:0; background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; z-index:9999;">
+        <div style="background:#fff; width:480px; max-width:95%; padding:16px; border-radius:8px; box-shadow:0 6px 20px rgba(0,0,0,0.2);">
+            <h5>DETALLES DE MANTO (Referencia COVENIN - valores sugeridos)</h5>
+            <p style="font-size:12px; color:#666; margin-top:6px;">Selecciona espesor, tipo de material, método de aplicación, solape y equipo de seguridad. Estos valores son sugeridos; verifica contra la normativa COVENIN aplicable.</p>
+
+            <label style="margin-top:8px;">Espesor del manto (mm):</label>
+            <select id="manto_mm">
+                <option value="2">2 mm</option>
+                <option value="3">3 mm</option>
+                <option value="4" selected>4 mm</option>
+                <option value="5">5 mm</option>
+            </select>
+
+            <label style="margin-top:8px;">Tipo de material:</label>
+            <select id="manto_tipo_material">
+                <option value="asfaltico">Manto asfáltico</option>
+                <option value="asfaltico_modificado">Manto asfáltico modificado</option>
+                <option value="polimerico">Polímero (moderno)</option>
+            </select>
+
+            <label style="margin-top:8px;">Método de aplicación:</label>
+            <select id="manto_metodo">
+                <option value="soplete">Soplete</option>
+                <option value="rodillo">Rodillo/cepillo</option>
+                <option value="spray">Spray</option>
+            </select>
+
+            <label style="margin-top:8px;">Solape recomendado:</label>
+            <select id="manto_solape_select">
+                <option value="8">8 cm</option>
+                <option value="10" selected>10 cm</option>
+                <option value="12">12 cm</option>
+            </select>
+
+            <label style="margin-top:8px;">Equipo de seguridad (selecciona o añade):</label>
+            <input id="manto_equipo_input" placeholder="Ej: Guantes, protector facial, botas" style="width:100%; padding:8px; margin-top:4px;">
+
+            <div style="display:flex; gap:8px; margin-top:12px; justify-content:flex-end;">
+                <button class="btn btn-primary" onclick="guardarMantoDetails()">GUARDAR</button>
+                <button class="btn" style="background:#eee;" onclick="cerrarModalManto()">CANCELAR</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="paso2" class="hidden">
+        <p style="text-align: center; font-size: 12px;">Honora. Profesi. Consultoria Automatizada <b>$10.00 USD</b></p>
+
+        <label style="font-size:11px; margin-top:8px;">PayPal Client ID</label>
+        <input type="text" id="paypal_client_id" placeholder="AVENvr04fvsjtCX1mw9B75602y2DPDWokkTrVg6yVprbupPhrrKzozUw-ekQfn_prUPkCTInrZMP_cZm" value="AVENvr04fvsjtCX1mw9B75602y2DPDWokkTrVg6yVprbupPhrrKzozUw-ekQfn_prUPkCTInrZMP_cZm">
+        <button class="btn" style="margin-top:8px;" onclick="cargarPaypal()">Cargar PayPal / Iniciar Pago</button>
+
+        <div id="paypal-button-container" style="margin-top:10px"></div>
+        <div id="paypal-warning" style="color:#a00; font-size:12px; margin-top:8px; display:none;"></div>
+        <button onclick="debugBypass()" style="background:none; border:none; color:#ccc; font-size:9px; width:100%; cursor:pointer; margin-top:6px;">[DEBUG: Saltar Pago]</button>
+    </div>
+
+    <div id="paso3" class="hidden">
+        <div style="text-align: center; color: green; font-weight: bold; margin-bottom: 10px;">✓ LISTO PARA DESCARGAR</div>
+        <button class="btn btn-success" onclick="descargarPDF()">IMPRIMIR CERTIFICACIÓN PDF</button>
+    </div>
+</div>
+
+<script>
+    let datos = {};
+
+    function irAPago() {
+        datos.cliente = document.getElementById('cliente').value;
+        datos.area = document.getElementById('area').value;
+        datos.sistema = document.getElementById('sistema').value;
+        datos.superficie = document.getElementById('superficie').value;
+        datos.modo = document.getElementById('tipo_sistema').value;
+
+        if(datos.modo === 'frio'){
+            datos.material_frio = document.getElementById('material_frio').value;
+            datos.capas_frio = document.getElementById('capas_frio').value;
+            datos.tiempo_secado = document.getElementById('tiempo_secado').value;
+            datos.frio_espesor = document.getElementById('frio_espesor')?.value;
+        } else {
+            datos.manto_caliente = document.getElementById('manto_caliente').value;
+            datos.metodo_aplicacion = document.getElementById('metodo_aplicacion').value;
+            datos.solape = getSolape();
+            datos.equipo_seguridad = document.getElementById('equipo_seguridad').value;
+        }
+
+        // validaciones básicas
+        if(!datos.cliente || !datos.area) return alert("Por favor, llena los datos obligatorios (cliente y área)");
+        if(!datos.superficie) return alert("Selecciona el tipo de superficie");
+        if(!datos.modo) return alert("Selecciona el modo (frío o caliente)");
+
+        if(datos.modo === 'frio'){
+            if(!datos.material_frio || !datos.capas_frio || !datos.tiempo_secado) return alert("Completa las opciones para modo frío");
+        } else {
+            if(!datos.manto_caliente || !datos.metodo_aplicacion || !datos.solape || !datos.equipo_seguridad) return alert("Completa las opciones para modo caliente");
+        }
+
+        document.getElementById('paso1').classList.add('hidden');
+        document.getElementById('paso2').classList.remove('hidden');
+        cargarPaypal();
+    }
+
+    function cargarPaypal() {
+        const clientId = document.getElementById('paypal_client_id')?.value || 'sb';
+        const warnEl = document.getElementById('paypal-warning');
+        if(warnEl){ warnEl.style.display = 'none'; warnEl.textContent = ''; }
+
+        // Si el almacenamiento está bloqueado, omitimos cargar el SDK y mostramos un botón alternativo
+        if(!isStorageAvailable()){
+            if(warnEl){
+                warnEl.textContent = 'Atención: el navegador está bloqueando el acceso al almacenamiento (Tracking Prevention). Se omitirá la carga de PayPal. Usa el botón alternativo para continuar.';
+                warnEl.style.display = 'block';
+            }
+            // Limpiar contenedor PayPal y añadir botón alternativo que salte al paso siguiente
+            const container = document.getElementById('paypal-button-container');
+            if(container){
+                container.innerHTML = '';
+                const altBtn = document.createElement('button');
+                altBtn.className = 'btn btn-primary';
+                altBtn.textContent = 'Continuar sin PayPal (modo alternativo)';
+                altBtn.onclick = () => {
+                    // Generar PDF del presupuesto y avanzar al paso final (modo alternativo)
+                    try{
+                        // Asegurarnos de que los datos estén disponibles: generar una previsualización interna
+                        const area = parseFloat(document.getElementById('area').value) || 0;
+                        const superficie = document.getElementById('superficie').value || '';
+                        const modo = document.getElementById('tipo_sistema').value || '';
+                        const datosModo = {};
+                        if(modo === 'frio'){
+                            datosModo.material = document.getElementById('material_frio').value;
+                            datosModo.capas = document.getElementById('capas_frio').value;
+                            datosModo.tiempo = document.getElementById('tiempo_secado').value;
+                        } else {
+                            datosModo.manto = document.getElementById('manto_caliente').value;
+                            datosModo.metodo = document.getElementById('metodo_aplicacion').value;
+                            datosModo.solape = getSolape();
+                            datosModo.equipo = document.getElementById('equipo_seguridad').value;
+                        }
+                        // generar PDF directamente
+                        descargarPDF();
+                    }catch(e){
+                        console.error('Error modo alternativo PDF:', e);
+                    } finally {
+                        debugBypass();
+                    }
+                };
+                container.appendChild(altBtn);
+            }
+            return; // no intentamos cargar el SDK
+        }
+
+        // Si hay acceso a almacenamiento, cargamos el SDK normalmente
+        loadPaypalSdk(clientId).then(() => {
+            if (!window.paypal) return alert('SDK de PayPal no disponible');
+            paypal.Buttons({
+                createOrder: (data, actions) => {
+                    return actions.order.create({ purchase_units: [{ amount: { value: '10.00' } }] });
+                },
+                onApprove: (data, actions) => {
+                    return actions.order.capture().then(() => { debugBypass(); });
+                }
+            }).render('#paypal-button-container');
+        }).catch(err => {
+            if(warnEl){ warnEl.textContent = 'Error cargando PayPal: ' + err + '. Prueba permitiendo cookies o usando otro navegador.'; warnEl.style.display = 'block'; }
+        });
+    }
+
+    function loadPaypalSdk(clientId){
+        return new Promise((resolve, reject) => {
+            if(window.paypal) return resolve();
+            const existing = document.querySelector('script[data-paypal-sdk]');
+            if(existing){
+                existing.addEventListener('load', () => resolve());
+                existing.addEventListener('error', () => reject('load-error'));
+                return;
+            }
+            const s = document.createElement('script');
+            s.src = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(clientId)}&currency=USD`;
+            s.setAttribute('data-paypal-sdk', '1');
+            s.onload = () => resolve();
+            s.onerror = () => reject('network');
+            document.head.appendChild(s);
+        });
+    }
+
+    // Detectar si el navegador permite acceso a localStorage (puede fallar por Tracking Prevention)
+    function isStorageAvailable(){
+        try{
+            const key = '__si_test__';
+            window.localStorage.setItem(key, key);
+            window.localStorage.removeItem(key);
+            return true;
+        }catch(e){
+            return false;
+        }
+    }
+
+    function aplicarTipoSistema(tipo){
+        const opcionesFrio = document.getElementById('opciones-frio');
+        const opcionesCaliente = document.getElementById('opciones-caliente');
+        opcionesFrio.classList.toggle('hidden', tipo !== 'frio');
+        opcionesCaliente.classList.toggle('hidden', tipo !== 'caliente');
+
+        // Ajustar select de superficie: eliminar la opción 'madera' cuando el sistema es caliente
+        const superficieSel = document.getElementById('superficie');
+        if(superficieSel){
+            const maderaOption = superficieSel.querySelector('option[value="madera"]');
+            if(tipo === 'caliente'){
+                if(maderaOption){
+                    // guardar HTML en datos para poder restaurarla si el usuario cambia a frío
+                    datos._maderaOptionHTML = maderaOption.outerHTML;
+                    maderaOption.remove();
+                }
+                // si la opción seleccionada era madera, seleccionar 'losa' por seguridad
+                if(superficieSel.value === 'madera') superficieSel.value = 'losa';
+            } else {
+                // restaurar la opción madera si fue eliminada
+                const exists = superficieSel.querySelector('option[value="madera"]');
+                if(!exists){
+                    let opt = null;
+                    if(datos._maderaOptionHTML){
+                        // crear desde el HTML guardado
+                        const wrapper = document.createElement('div');
+                        wrapper.innerHTML = datos._maderaOptionHTML.trim();
+                        opt = wrapper.firstChild;
+                    } else {
+                        opt = document.createElement('option');
+                        opt.value = 'madera';
+                        opt.text = 'Madera';
+                    }
+                    // insertarla en la segunda posición (después de 'losa') si es posible
+                    if(superficieSel.options.length >= 1) superficieSel.insertBefore(opt, superficieSel.options[1] || null);
+                    else superficieSel.appendChild(opt);
+                }
+            }
+        }
+
+        datos.modo = tipo; // mantener compatibilidad con código que usa datos.modo
+    }
+
+    function tipoSistemaCambio(){
+        const tipo = document.getElementById('tipo_sistema').value;
+        aplicarTipoSistema(tipo);
+    }
+
+    function cerrarPreview(){
+        document.getElementById('preview').classList.add('hidden');
+    }
+
+    function previsualizarPresupuesto(){
+        try{
+            // recolectar datos y validar (mismas validaciones que irAPago)
+            const cliente = document.getElementById('cliente').value;
+            const area = parseFloat(document.getElementById('area').value) || 0;
+            const modo = document.getElementById('tipo_sistema').value;
+
+            const superficie = document.getElementById('superficie').value;
+
+            if(!cliente || !area) throw new Error('Por favor completa cliente y área para previsualizar');
+            if(!superficie) throw new Error('Selecciona el tipo de superficie');
+            if(!modo) throw new Error('Selecciona el tipo de sistema (frío o caliente)');
+
+            // datos del modo
+            const datosModo = {};
+            if(modo === 'frio'){
+                datosModo.material = document.getElementById('material_frio').value;
+                datosModo.capas = document.getElementById('capas_frio').value;
+                datosModo.tiempo = document.getElementById('tiempo_secado').value;
+            } else {
+                datosModo.manto = document.getElementById('manto_caliente').value;
+                datosModo.metodo = document.getElementById('metodo_aplicacion').value;
+                datosModo.solape = getSolape();
+                datosModo.equipo = document.getElementById('equipo_seguridad').value;
+            }
+
+            // si es sistema en frio, actualizar capas/tiempo desde config si no fueron proporcionados
+            if(modo === 'frio'){
+                const cfg = getConfig();
+                const sf = cfg.sistemas_frios[ (datosModo.material) ] || {};
+                if(!document.getElementById('capas_frio').value) document.getElementById('capas_frio').value = sf.capas_recomendadas || 2;
+                if(!document.getElementById('tiempo_secado').value) document.getElementById('tiempo_secado').value = (sf.tiempo_secado_horas ? sf.tiempo_secado_horas + ' hrs' : '');
+            }
+
+            const lines = calcularPresupuesto(area, superficie, modo, datosModo);
+            renderizarPreview(lines);
+            document.getElementById('preview-warning').style.display = 'none';
+            document.getElementById('preview').classList.remove('hidden');
+        }catch(err){
+            console.error('Error previsualizarPresupuesto:', err);
+            const warn = document.getElementById('preview-warning');
+            if(warn){ warn.textContent = (err && err.message) ? err.message : String(err); warn.style.display = 'block'; }
+            alert((err && err.message) ? err.message : 'Error generando previsualización. Revisa la consola.');
+        }
+    }
+
+    function calcularPresupuesto(area, superficie, modo, datosModo){
+        // Definición de partidas según normas/COVENIN (códigos de ejemplo)
+        // Estas partidas son ilustrativas; ajustar códigos y precios según normativa y base de costos real.
+        const cfg = getConfig();
+        const precioUnitario = (cfg.partidas && cfg.partidas.impermeabilizacion && cfg.partidas.impermeabilizacion.pu && cfg.partidas.impermeabilizacion.pu.default) ? cfg.partidas.impermeabilizacion.pu.default : 18.00;
+        let partidas = [];
+        // Preparación de superficie: usar tarifa por superficie si existe
+        const prepCfg = cfg.partidas && cfg.partidas.preparacion;
+        let puPreparacion = 3.50;
+        if(prepCfg && prepCfg.pu){
+            puPreparacion = prepCfg.pu[superficie] || prepCfg.pu['losa'] || puPreparacion;
+        }
+        partidas.push({ codigo: (prepCfg && prepCfg.codigo) || 'E410', descripcion: (prepCfg && prepCfg.descripcion) || 'Preparación de superficie', unidad: 'm2', cantidad: area, pu: puPreparacion, total: area * puPreparacion });
+
+        // Impermeabilización (mano de obra / aplicación)
+        const impCfg = cfg.partidas && cfg.partidas.impermeabilizacion;
+        partidas.push({ codigo: (impCfg && impCfg.codigo) || 'E411', descripcion: (impCfg && impCfg.descripcion) || 'Impermeabilización - aplicación (según modo)', unidad: 'm2', cantidad: area, pu: precioUnitario, total: area * precioUnitario });
+
+        // Si sistema en frio: calcular consumo segun config.sistemas_frios
+        if(modo === 'frio'){
+            const matKey = datosModo.material || document.getElementById('material_frio').value;
+            const sf = (cfg.sistemas_frios && cfg.sistemas_frios[matKey]) || null;
+            const matCfg = cfg.partidas && cfg.partidas.materialFrio;
+            const puMaterialBase = (matCfg && matCfg.pu && matCfg.pu[matKey]) ? matCfg.pu[matKey] : (matCfg && matCfg.pu && matCfg.pu.default) || 0.0;
+            const capas = parseFloat(datosModo.capas || document.getElementById('capas_frio').value) || (sf && sf.capas_recomendadas) || 1;
+            const consumoPorCapa = sf ? (sf.consumo_por_m2_por_capa || 0) : 0;
+            const espesor = datosModo.espesor || document.getElementById('frio_espesor')?.value || '4';
+            const multEspesor = (cfg.espesores && cfg.espesores[espesor]) ? parseFloat(cfg.espesores[espesor]) : 1.0;
+
+            // aplicar multiplicador por espesor: afecta consumo y coste unitario
+            const cantidadMaterial = consumoPorCapa * area * capas * multEspesor; // unidades ajustadas
+            const puMaterial = puMaterialBase * multEspesor;
+            const totalMat = cantidadMaterial * puMaterialBase; // precio normalmente por unidad, mantengo base * cantidad
+            partidas.push({ codigo: (matCfg && matCfg.codigo) || 'E414', descripcion: `${matCfg && matCfg.descripcion ? matCfg.descripcion : 'Material (sistema frío)'}: ${matKey || '-'} (capas:${capas}, espesor:${espesor}mm)`, unidad: 'unidad', cantidad: cantidadMaterial, pu: puMaterialBase, total: totalMat });
+
+            // ajustar precio de mano de obra por espesor
+            // incrementar precio de aplicación proporcional al multiplicador
+            // actualizamos la partida de impermeabilizacion anterior (última añadida antes de material)
+            // encontrar índice de impermeabilizacion
+            const idxImp = partidas.findIndex(x => x.codigo === ((cfg.partidas && cfg.partidas.impermeabilizacion && cfg.partidas.impermeabilizacion.codigo) || 'E411'));
+            if(idxImp !== -1){
+                partidas[idxImp].pu = partidas[idxImp].pu * multEspesor;
+                partidas[idxImp].total = partidas[idxImp].cantidad * partidas[idxImp].pu;
+            }
+        } else {
+            const mCfg = cfg.partidas && cfg.partidas.mantoCaliente;
+            partidas.push({ codigo: (mCfg && mCfg.codigo) || 'E413', descripcion: (mCfg && mCfg.descripcion) || `Manto (caliente): ${datosModo.manto || '-'}`, unidad: 'lote', cantidad: 1, pu: (mCfg && mCfg.pu && mCfg.pu.default) || 0.0, total: (mCfg && mCfg.pu && mCfg.pu.default) || 0.0 });
+        }
+
+        // Honorarios
+        const honCfg = cfg.partidas && cfg.partidas.honorarios;
+        partidas.push({ codigo: (honCfg && honCfg.codigo) || 'HON-01', descripcion: (honCfg && honCfg.descripcion) || 'Honora. Profesi. Consultoria Automatizada', unidad: 'serv', cantidad: 1, pu: (honCfg && honCfg.pu && honCfg.pu.default) || 10.00, total: (honCfg && honCfg.pu && honCfg.pu.default) || 10.00 });
+
+        const subtotal = partidas.reduce((s,p) => s + (parseFloat(p.total) || 0), 0);
+        const IVA = 0;
+        const total = subtotal + IVA;
+        return { partidas, subtotal, IVA, total };
+    }
+
+    function renderizarPreview(data){
+        // data: {partidas, subtotal, IVA, total}
+        const cont = document.getElementById('preview-content');
+        // Encabezado informativo (usar valores del formulario)
+        const cliente = document.getElementById('cliente').value || '';
+        const sistema = document.getElementById('sistema').value || '';
+        const superficie = document.getElementById('superficie').value || '';
+        const modo = document.getElementById('tipo_sistema').value || '';
+        const material = document.getElementById('material_frio')?.value || '';
+        const espesor = document.getElementById('frio_espesor')?.value || '';
+        let headerHtml = `<div style="font-size:13px; margin-bottom:8px;"><b>Cliente:</b> ${cliente} &nbsp; <b>Sistema:</b> ${sistema} &nbsp; <b>Superficie:</b> ${superficie}</div>`;
+        if(modo === 'frio') headerHtml += `<div style="font-size:12px; margin-bottom:8px;"><b>Modo:</b> Frío &nbsp; <b>Material:</b> ${material} &nbsp; <b>Espesor:</b> ${espesor} mm</div>`;
+        if(modo === 'caliente') headerHtml += `<div style="font-size:12px; margin-bottom:8px;"><b>Modo:</b> Caliente</div>`;
+        // mostrar encabezado + tabla juntos
+        // concatenamos el header con la tabla HTML para que no se reemplace
+        const partidas = data.partidas;
+        let html = '<table style="width:100%; border-collapse:collapse;">';
+        html += '<thead><tr style="background:#f7f7f7;"><th style="border:1px solid #ddd; padding:6px; text-align:left">Código</th><th style="border:1px solid #ddd; padding:6px; text-align:left">Descripción</th><th style="border:1px solid #ddd; padding:6px; text-align:right">Unidad</th><th style="border:1px solid #ddd; padding:6px; text-align:right">Cantidad</th><th style="border:1px solid #ddd; padding:6px; text-align:right">P.Unit</th><th style="border:1px solid #ddd; padding:6px; text-align:right">Total</th></tr></thead>';
+        html += '<tbody>';
+        partidas.forEach(p => {
+            html += `<tr><td style="border:1px solid #ddd; padding:6px">${p.codigo}</td><td style="border:1px solid #ddd; padding:6px">${p.descripcion}</td><td style="border:1px solid #ddd; padding:6px; text-align:right">${p.unidad}</td><td style="border:1px solid #ddd; padding:6px; text-align:right">${p.cantidad}</td><td style="border:1px solid #ddd; padding:6px; text-align:right">$ ${p.pu.toFixed(2)}</td><td style="border:1px solid #ddd; padding:6px; text-align:right">$ ${p.total.toFixed(2)}</td></tr>`;
+        });
+        html += '</tbody>';
+        html += `<tfoot><tr><td colspan="5" style="border:1px solid #ddd; padding:6px; text-align:right"><b>Subtotal</b></td><td style="border:1px solid #ddd; padding:6px; text-align:right">$ ${data.subtotal.toFixed(2)}</td></tr>`;
+        html += `<tr><td colspan="5" style="border:1px solid #ddd; padding:6px; text-align:right"><b>IVA</b></td><td style="border:1px solid #ddd; padding:6px; text-align:right">$ ${data.IVA.toFixed(2)}</td></tr>`;
+        html += `<tr><td colspan="5" style="border:1px solid #ddd; padding:6px; text-align:right"><b>Total</b></td><td style="border:1px solid #ddd; padding:6px; text-align:right">$ ${data.total.toFixed(2)}</td></tr></tfoot>`;
+        html += '</table>';
+        cont.innerHTML = headerHtml + html;
+    }
+
+    // Configuracion de partidas (se puede editar en la interfaz)
+    let config = null;
+    function getConfig(){
+        if(config) return config;
+        try{
+            const txt = document.getElementById('config-json').value;
+            config = JSON.parse(txt);
+        }catch(e){
+            // cargar valores por defecto en caso de error
+            config = {
+                partidas: {
+                    preparacion: { codigo: 'E410', descripcion: 'Preparación de superficie (limpieza, reparación de fisuras)', pu: { losa:3.5, madera:4.0, lamina:3.0 } },
+                    impermeabilizacion: { codigo: 'E411', descripcion: 'Impermeabilización - aplicación (según modo)', pu: { default:18.0 } },
+                    materialFrio: { codigo: 'E412', descripcion: 'Material (frío)', pu: { default:0.0 } },
+                    mantoCaliente: { codigo: 'E413', descripcion: 'Manto (caliente)', pu: { default:0.0 } },
+                    honorarios: { codigo: 'HON-01', descripcion: 'Honora. Profesi. Consultoria Automatizada', pu: { default:10.0 } }
+                }
+            };
+        }
+        return config;
+    }
+
+    function abrirConfigEditor(){
+        document.getElementById('config-editor').classList.remove('hidden');
+    }
+    function cerrarConfigEditor(){
+        document.getElementById('config-editor').classList.add('hidden');
+    }
+    function guardarConfigEdits(){
+        try{
+            const txt = document.getElementById('config-json').value;
+            const parsed = JSON.parse(txt);
+            config = parsed;
+            alert('Configuración guardada');
+            cerrarConfigEditor();
+        }catch(e){
+            alert('JSON inválido: ' + e.message);
+        }
+    }
+
+    // Modal manto functions
+    function abrirModalManto(){
+        // rellenar con valores actuales si existen
+        document.getElementById('manto_mm').value = datos.manto_mm || '4';
+        document.getElementById('manto_tipo_material').value = datos.manto_tipo_material || 'asfaltico';
+        document.getElementById('manto_metodo').value = datos.manto_metodo || 'soplete';
+        document.getElementById('manto_solape_select').value = getSolape() || '10';
+        document.getElementById('manto_equipo_input').value = datos.manto_equipo || '';
+        document.getElementById('modal-manto').classList.remove('hidden');
+    }
+    function cerrarModalManto(){
+        document.getElementById('modal-manto').classList.add('hidden');
+    }
+    function guardarMantoDetails(){
+        datos.manto_mm = document.getElementById('manto_mm').value;
+        datos.manto_tipo_material = document.getElementById('manto_tipo_material').value;
+        datos.manto_metodo = document.getElementById('manto_metodo').value;
+        datos.manto_solape = document.getElementById('manto_solape_select').value;
+        datos.manto_equipo = document.getElementById('manto_equipo_input').value;
+
+        // reflejar en el campo manto_caliente si vacío
+        const mCampo = document.getElementById('manto_caliente');
+        if(mCampo && !mCampo.value) mCampo.value = `Manto ${datos.manto_mm}mm - ${datos.manto_tipo_material}`;
+
+        cerrarModalManto();
+        alert('Detalles de manto guardados. Los verá en la previsualización y el PDF.');
+    }
+
+    // Fuente única para obtener el solape: primero el campo principal, luego el modal, luego datos guardados
+    function getSolape(){
+        return document.getElementById('solape')?.value || document.getElementById('manto_solape_select')?.value || datos.manto_solape || datos.solape || '';
+    }
+
+    // Handler para cambio de material en frio: actualiza capas sugeridas y tiempo de secado desde config
+    function frioMaterialCambio(){
+        const key = document.getElementById('material_frio').value;
+        const cfg = getConfig();
+        const sf = cfg.sistemas_frios && cfg.sistemas_frios[key];
+        if(sf){
+            document.getElementById('capas_frio').value = sf.capas_recomendadas || '';
+            document.getElementById('tiempo_secado').value = (sf.tiempo_secado_horas ? sf.tiempo_secado_horas + ' hrs' : '');
+        }
+    }
+
+    function exportCSV(){
+        const data = document.getElementById('preview-content');
+        if(!data || data.innerText.trim() === '') return alert('No hay datos para exportar');
+        // Recalcular para garantizar consistencia
+        const area = parseFloat(document.getElementById('area').value) || 0;
+        const modo = document.getElementById('tipo_sistema').value;
+        const datosModo = {};
+        if(modo === 'frio'){
+            datosModo.material = document.getElementById('material_frio').value;
+            datosModo.capas = document.getElementById('capas_frio').value;
+            datosModo.tiempo = document.getElementById('tiempo_secado').value;
+        } else {
+            datosModo.manto = document.getElementById('manto_caliente').value;
+            datosModo.metodo = document.getElementById('metodo_aplicacion').value;
+                datosModo.solape = getSolape();
+            datosModo.equipo = document.getElementById('equipo_seguridad').value;
+        }
+        const superficie = document.getElementById('superficie').value;
+        const result = calcularPresupuesto(area, superficie, modo, datosModo);
+        let csv = 'Codigo,Descripcion,Unidad,Cantidad,PrecioUnitario,Total\n';
+        result.partidas.forEach(p => {
+            csv += `${p.codigo},"${p.descripcion}",${p.unidad},${p.cantidad},${p.pu.toFixed(2)},${p.total.toFixed(2)}\n`;
+        });
+        csv += `,,,,Subtotal,${result.subtotal.toFixed(2)}\n`;
+        csv += `,,,,IVA,${result.IVA.toFixed(2)}\n`;
+        csv += `,,,,Total,${result.total.toFixed(2)}\n`;
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const a = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        a.href = url;
+        a.download = `presupuesto.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    function debugBypass() {
+        document.getElementById('paso2').classList.add('hidden');
+        document.getElementById('step-2')?.classList.add('hidden'); // Por si acaso
+        document.getElementById('paso3').classList.remove('hidden');
+    }
+
+    function descargarPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('p', 'mm', 'a4');
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const margin = 15;
+
+        // Encabezado
+        doc.setFontSize(14);
+        doc.setFont(undefined, 'bold');
+        doc.text('SISTEMA INTELIGENTE DE VALUACIONES TÉCNICAS', pageWidth / 2, 20, { align: 'center' });
+        // Subtítulo centrado (debajo del título)
+        doc.setFontSize(12);
+        doc.setFont(undefined, 'normal');
+        doc.text('MÓDULO: IMPERMEABILIZACIÓN', pageWidth / 2, 24, { align: 'center' });
+        // Fecha (alineada a la derecha), un poco más abajo para evitar solapamientos
+        doc.setFontSize(10);
+        const fecha = new Date().toLocaleString();
+        doc.text(`Fecha: ${fecha}`, pageWidth - margin, 28, { align: 'right' });
+
+        // Datos del cliente y obra
+        const cliente = document.getElementById('cliente').value || datos.cliente || '';
+        const sistema = document.getElementById('sistema').value || datos.sistema || '';
+        const area = parseFloat(document.getElementById('area').value || datos.area) || 0;
+        const superficie = document.getElementById('superficie')?.value || datos.superficie || '';
+        const modo = document.getElementById('tipo_sistema')?.value || datos.modo || '';
+
+        let cursorY = 40;
+        doc.setFontSize(11);
+        doc.text(`Cliente: ${cliente}`, margin, cursorY);
+        cursorY += 6;
+        doc.text(`Sistema: ${sistema}`, margin, cursorY);
+        cursorY += 6;
+        doc.text(`Superficie: ${superficie}`, margin, cursorY);
+        cursorY += 6;
+        doc.text(`Área a tratar: ${area} m²`, margin, cursorY);
+        cursorY += 8;
+
+        if (modo === 'frio'){
+            const material = document.getElementById('material_frio')?.value || datos.material_frio || '';
+            const capas = document.getElementById('capas_frio')?.value || datos.capas_frio || '';
+            const tiempo = document.getElementById('tiempo_secado')?.value || datos.tiempo_secado || '';
+            doc.text(`Modo: Frío`, margin, cursorY);
+            cursorY += 6;
+            doc.text(`Material: ${material}`, margin, cursorY);
+            cursorY += 6;
+            doc.text(`Capas: ${capas}`, margin, cursorY);
+            cursorY += 6;
+            doc.text(`Tiempo de secado: ${tiempo}`, margin, cursorY);
+            cursorY += 8;
+        } else if (modo === 'caliente'){
+            const manto = document.getElementById('manto_caliente')?.value || datos.manto_caliente || '';
+            const metodo = document.getElementById('metodo_aplicacion')?.value || datos.metodo_aplicacion || '';
+            const solape = getSolape();
+            const equipo = document.getElementById('equipo_seguridad')?.value || datos.equipo_seguridad || '';
+            doc.text(`Modo: Caliente`, margin, cursorY);
+            cursorY += 6;
+            doc.text(`Tipo de manto: ${manto}`, margin, cursorY);
+            cursorY += 6;
+            doc.text(`Método de aplicación: ${metodo}`, margin, cursorY);
+            cursorY += 6;
+            doc.text(`Solape: ${solape}`, margin, cursorY);
+            cursorY += 6;
+            doc.text(`Equipo de seguridad: ${equipo}`, margin, cursorY);
+            cursorY += 8;
+        }
+
+        // Calcular presupuesto usando la misma lógica
+        const datosModo = {};
+        if (modo === 'frio'){
+            datosModo.material = document.getElementById('material_frio')?.value || datos.material_frio || '';
+            datosModo.capas = document.getElementById('capas_frio')?.value || datos.capas_frio || '';
+            datosModo.tiempo = document.getElementById('tiempo_secado')?.value || datos.tiempo_secado || '';
+        } else {
+            datosModo.manto = document.getElementById('manto_caliente')?.value || datos.manto_caliente || '';
+            datosModo.metodo = document.getElementById('metodo_aplicacion')?.value || datos.metodo_aplicacion || '';
+            datosModo.solape = getSolape();
+            datosModo.equipo = document.getElementById('equipo_seguridad')?.value || datos.equipo_seguridad || '';
+        }
+
+        const resultado = calcularPresupuesto(area, superficie, modo, datosModo);
+
+        // Preparar filas para la tabla
+        const body = resultado.partidas.map(p => [p.codigo, p.descripcion, p.unidad, (isNaN(p.cantidad) ? p.cantidad : p.cantidad.toString()), `$ ${p.pu.toFixed(2)}`, `$ ${p.total.toFixed(2)}`]);
+        // filas de totales
+        body.push(['', '', '', '', 'Subtotal', `$ ${resultado.subtotal.toFixed(2)}`]);
+        body.push(['', '', '', '', 'IVA', `$ ${resultado.IVA.toFixed(2)}`]);
+        body.push(['', '', '', '', 'Total', `$ ${resultado.total.toFixed(2)}`]);
+
+        // Generar tabla con estilo profesional
+        doc.autoTable({
+            startY: cursorY + 4,
+            head: [['Código', 'Partida', 'Unidad', 'Cantidad', 'P.Unit (USD)', 'Total (USD)']],
+            body: body,
+            styles: { fontSize: 9 },
+            headStyles: { fillColor: [0, 51, 102], textColor: 255 },
+            footStyles: { fillColor: [240,240,240] },
+            columnStyles: {
+                0: { cellWidth: 20 },
+                1: { cellWidth: 70 },
+                2: { cellWidth: 20, halign: 'right' },
+                3: { cellWidth: 20, halign: 'right' },
+                4: { cellWidth: 30, halign: 'right' },
+                5: { cellWidth: 30, halign: 'right' }
+            },
+            theme: 'striped'
+        });
+
+        // Pie / firma
+        const finalY = doc.lastAutoTable ? doc.lastAutoTable.finalY + 12 : cursorY + 80;
+        doc.setFontSize(10);
+        doc.text('Avalado por:', margin, finalY);
+        doc.text('Ing. Civil e Informatico, Nerbelis Valdeblanques CIV 310409', margin, finalY + 14);
+
+        const filename = `Presupuesto_${(cliente || 'sin_cliente').replace(/[^a-z0-9_\-]/gi, '_')}.pdf`;
+        doc.save(filename);
+    }
+
+    // Inicializar vista según `TIPO DE SISTEMA` seleccionado
+    window.addEventListener('DOMContentLoaded', () => {
+        const tipo = document.getElementById('tipo_sistema')?.value;
+        if(tipo) aplicarTipoSistema(tipo);
+    });
+</script>
+
+</body>
+</html>
