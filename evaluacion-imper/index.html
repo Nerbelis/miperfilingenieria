@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Software de Impermeabilización - Ing. Nerbelis</title>
+    <link rel="stylesheet" href="imper-style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>Servicios de Consultoría Automatizada</h1>
+    <h2>Evaluación de Impermeabilización, segun Normas Covenin 2000:92.,3231:1996.,3110,3082</h2>
+
+    <div class="input-section">
+        <div class="form-group">
+            <label>Área a Impermeabilizar (m²):</label>
+            <input type="number" id="area" placeholder="Ej: 45">
+        </div>
+        
+        <div class="form-group">
+            <label>Tipo de Superficie (Sustrato):</label>
+            <select id="sustrato">
+                <option value="concreto">Platabanda / Concreto</option>
+                <option value="zinc">Láminas de Zinc / Acerolit</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Espesor del Manto (COVENIN):</label>
+            <select id="espesor">
+                <option value="3.2">3.2 mm (Uso Residencial)</option>
+                <option value="4.0">4.0 mm (Uso Profesional/Tránsito)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Sistema de Aplicación:</label>
+            <select id="sistema">
+                <option value="frio">Sistema Frío (Emulsión/Adhesivo)</option>
+                <option value="calor">Sistema Calor (Soplete/Fuego)</option>
+            </select>
+        </div>
+
+        <button type="button" onclick="generarReporte()" id="btn-generar">Generar Reporte de Partidas</button>
+    </div>
+
+    <div id="reporte" class="reporte-container" style="display: none; filter: blur(8px);">
+        <div class="header-profesional">
+            <div class="logo-css">
+                <div class="circulo-logo">
+                    <span class="letras-logo">NV</span>
+                    <div class="linea-decorativa"></div>
+                    <span class="sub-logo">ING</span>
+                </div>
+            </div>
+            <div class="datos-consultor">
+                <strong>Ing. Nerbelis Valdeblanques</strong><br>
+                <span>CIV: 310409 | Civil e Informática</span>
+            </div>
+        </div>
+
+        <h3>Evaluación de Impermeabilización según (Normas COVENIN)</h3>
+        <div id="detalle-proyecto" class="resumen-caja"></div>
+        
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+            <thead>
+                <tr style="background-color: #2c3e50; color: white;">
+                    <th style="padding: 12px; border: 1px solid #ddd;">Código COVENIN</th>
+                    <th style="padding: 12px; border: 1px solid #ddd;">Descripción de la Partida</th>
+                    <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">Unidad</th>
+                    <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">Cantidad</th>
+                </tr>
+            </thead>
+            <tbody id="cuerpo-tabla">
+                </tbody>
+        </table>
+
+        <div class="footer-firma" style="margin-top: 30px; text-align: center; border-top: 1px solid #ccc; padding-top: 20px; background-color: #fcfcfc; border-radius: 0 0 15px 15px;">
+    
+    <div style="text-align: left; display: inline-block; max-width: 90%; margin-bottom: 20px;">
+        <p style="font-size: 11px; color: #444; margin: 5px 0; line-height: 1.4;">
+            <strong>Nota Técnica:</strong> Los cómputos métricos y la codificación de partidas han sido generados bajo los criterios de medición de la <strong>Norma COVENIN 2000-92</strong> (Edificaciones).
+        </p>
+        <p style="font-size: 11px; color: #d32f2f; margin: 5px 0; font-weight: bold;">
+            <strong>Validez de la Oferta:</strong> Este presupuesto técnico tiene una validez de <strong>7 días calendario</strong> a partir de su generación, debido a la fluctuación de costos de materiales asfálticos.
+        </p>
+    </div>
+
+    <div style="margin-top: 10px;">
+        <p style="margin: 0; font-size: 16px; font-weight: bold; color: #1a1a1a;">Ing. Nerbelis Valdeblanques</p>
+        <p style="margin: 0; font-size: 14px; color: #666;">Ingeniera Civil e Informática</p>
+        <p style="margin: 0; font-size: 14px; color: #666;"><strong>CIV: 310409</strong></p>
+    </div>
+</div>
+    </div> <div id="seccion-pagos" class="no-print" style="display: none; text-align: center; padding: 20px; border: 2px solid #1a1a1a; border-radius: 15px; margin-top: 20px; background-color: #f9f9f9;">
+        <h5 style="color: #1a1a1a; margin-bottom: 15px;">Seleccione método de pago para 
+            desbloquear e imprimir el reporte ($10.00)</h5>
+        
+        <div id="paypal-button-container" style="margin-bottom: 15px;"></div>
+        
+        <div style="margin: 10px 0; font-weight: bold; color: #888;">- O TAMBIÉN -</div>
+        
+        <button type="button" onclick="mostrarPagoMovil()" style="background-color: #1a1a1a; color: white; width: 100%; max-width: 300px; padding: 15px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer;">PAGAR CON PAGO MÓVIL (VENEZUELA)</button>
+
+        <div id="qr-container" style="display: none; margin-top: 20px; border-top: 1px solid #ddd; padding-top: 15px;">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=AVENvr04fvsjtCX1mw9B75602y2DPDWokkTrVg6yVprbupPhrrKzozUw-ekQfn_prUPkCTInrZMP_cZm" alt="QR Pago Móvil" style="width: 200px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+            <p style="font-size: 14px; margin-top: 10px; line-height: 1.6;">
+                <strong>Banco:</strong> Banesco (0134)<br>
+                <strong>Celular:</strong> 0424-6163113<br>
+                <strong>Cédula:</strong> V-11282487
+            </p>
+            <button onclick="enviarConfirmacionWA()" style="background-color: #25D366; color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; max-width: 300px;">ENVIAR CAPTURA POR WHATSAPP</button>
+        </div>
+    </div>
+
+    <button id="btn-descargar" style="display: none; margin: 20px auto; background-color: #2c3e50; color: white; padding: 15px 30px; border-radius: 8px; font-weight: bold; cursor: pointer; border: none;" onclick="window.print()">DESCARGAR REPORTE EN PDF</button>
+
+</div> <script src="https://www.paypal.com/sdk/js?client-id=AVENvr04fvsjtCX1mw9B75602y2DPDWokkTrVg6yVprbupPhrrKzozUw-ekQfn_prUPkCTInrZMP_cZm&currency=USD"></script>
+<script src="imper-script.js"></script>
+
+</body>
+</html>

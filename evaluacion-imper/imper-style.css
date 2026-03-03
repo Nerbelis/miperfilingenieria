@@ -1,0 +1,314 @@
+/* Estilo General */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f6;
+    padding: 20px;
+    color: #333;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* Formulario */
+.input-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* Botón Principal */
+#btn-generar {
+    grid-column: span 2;
+    background-color: #27ae60;
+    color: white;
+    padding: 15px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+/* El contenedor principal del reporte */
+.reporte-container {
+    padding: 40px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    margin: 20px auto;
+}
+
+/* Títulos con el azul de ingeniería */
+h3 {
+    color: #2c3e50;
+    font-family: 'Arial', sans-serif;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
+}
+
+/* La tabla donde se ven los cálculos */
+#cuerpo-tabla {
+    font-size: 14px;
+}
+
+/* La zona de la firma del Ingeniero */
+.firma-footer {
+    margin-top: 40px;
+    text-align: right;
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+}
+
+/* Para que cuando imprimas el PDF se vea perfecto */
+@media print {
+    .no-print {
+        display: none !important; /* Oculta botones de pago en el PDF */
+    }
+    body {
+        background: white;
+    }
+}
+#detalle-proyecto {
+    background-color: #f8f9fa; /* Gris muy claro profesional */
+    border-left: 6px solid #2c3e50; /* Barra lateral azul oscuro */
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    color: #2c3e50;
+    font-size: 1.1em;
+}
+
+#detalle-proyecto strong {
+    color: #3498db; /* Resalta "Resumen del Proyecto" en azul claro */
+}
+* --- ESTILOS PROFESIONALES EN TONOS VERDES PARA EL REPORTE --- */
+
+/* Contenedor principal del reporte */
+#reporte {
+    background-color: #f0fff4; /* Un verde menta muy suave de fondo total */
+    border: 2px solid #27ae60; /* Borde verde esmeralda para definir la estructura */
+    border-radius: 12px;
+    padding: 30px;
+    margin-top: 25px;
+    box-shadow: 0 4px 15px rgba(39, 174, 96, 0.1); /* Sombra suave verdosa */
+}
+
+/* Sección de resumen del proyecto (Ficha técnica) */
+#detalle-proyecto {
+    background-color: #ffffff; /* Fondo blanco puro para resaltar el texto */
+    border: 1px solid #c3e6cb; /* Borde verde pálido sutil */
+    border-left: 6px solid #27ae60; /* Barra lateral gruesa verde oscuro distintiva */
+    padding: 20px;
+    margin-bottom: 25px;
+    border-radius: 6px;
+    color: #155724; /* Texto verde oscuro para fácil lectura */
+    font-size: 1.15em;
+}
+
+/* Cabecera de la tabla de partidas (th) */
+table thead th {
+    background-color: #27ae60; /* Fondo verde sólido fuerte para los títulos */
+    color: white; /* Texto blanco para máximo contraste */
+    padding: 18px 12px;
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 1px;
+    border: none;
+}
+
+/* Filas alternas de la tabla para legibilidad (tr) */
+#cuerpo-tabla tr:nth-child(even) {
+    background-color: #e6fffa; /* Un verde agua muy clarito para filas pares */
+}
+
+#cuerpo-tabla tr:nth-child(odd) {
+    background-color: #ffffff; /* Fondo blanco para filas impares */
+}
+
+/* Celdas individuales de la tabla (td) */
+#cuerpo-tabla td {
+    padding: 15px 12px;
+    border-bottom: 1px solid #c3e6cb; /* Línea divisoria verde pálido */
+    color: #2c3e50; /* Texto gris muy oscuro, casi negro */
+}
+/* El reporte inicia borroso y bloqueado */
+.reporte-bloqueado {
+    filter: blur(8px); /* Nivel de borrosidad */
+    pointer-events: none; /* Evita que puedan copiar el texto */
+    user-select: none;
+    transition: filter 0.5s ease; /* Efecto suave al desbloquear */
+}
+
+/* Clase para liberar el reporte */
+.reporte-liberado {
+    filter: blur(0);
+    pointer-events: auto;
+    user-select: auto;
+}
+@media print {
+    /* Ajusta el tamaño de la fuente global solo para el PDF */
+    html, body {
+        font-size: 10pt; /* Fuente más pequeña y técnica */
+        margin: 0;
+        padding: 0;
+    }
+
+    .reporte-container {
+        width: 100%;
+        margin: 0;
+        padding: 10px; /* Reducimos el espacio interno */
+        border: none;
+        box-shadow: none;
+    }
+
+    /* Compactar la tabla de partidas */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 9pt; /* Tabla aún más pequeña para que quepa todo */
+    }
+
+    table th, table td {
+        padding: 4px 6px !important; /* Celdas mucho más delgadas */
+    }
+
+    /* Reducir el tamaño de los títulos */
+    h3, #detalle-proyecto {
+        margin-top: 5px;
+        margin-bottom: 5px;
+        font-size: 1.2em;
+    }
+
+    /* Evitar que el navegador corte la tabla a la mitad */
+    tr {
+        page-break-inside: avoid;
+    }
+
+    /* Asegura que no se impriman los botones de pago */
+    .no-print, #seccion-pagos, #btn-descargar {
+        display: none !important;
+    }
+}
+@media print {
+    /* 1. Reducir el título principal y el logo */
+    h1, .titulo-principal { 
+        font-size: 14pt !important; 
+        margin-bottom: 5px !important; 
+        text-align: center;
+    }
+
+    h2, .subtitulo {
+        font-size: 11pt !important;
+        margin-top: 0 !important;
+        color: #666;
+    }
+
+    /* 2. Achicar la sección "Servicios de Consultoría Automatizada" */
+    header, .header-reporte {
+        margin-bottom: 10px !important;
+        padding: 5px !important;
+        border-bottom: 1px solid #ccc;
+    }
+
+    /* 3. Reducir el cuadro de Resumen del Proyecto */
+    #detalle-proyecto {
+        padding: 8px !important;
+        margin-bottom: 10px !important;
+        font-size: 9pt !important;
+        border-left-width: 3px !important; /* Barra verde más delgada */
+    }
+
+    /* 4. Forzar que todo suba eliminando espacios vacíos */
+    .container {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+
+    /* 5. Asegurar que los botones de pago NO aparezcan */
+    #seccion-pagos, .no-print {
+        display: none !important;
+    }
+}
+/* Clase para aplicar el efecto borroso */
+.efecto-borroso {
+    filter: blur(8px);
+    pointer-events: none; /* Evita que puedan seleccionar el texto */
+    user-select: none;
+}
+
+/* Opcional: una transición suave para cuando se desbloquee */
+#reporte {
+    transition: filter 0.5s ease;
+}
+/* --- NUEVOS ESTILOS PARA EL LOGOTIPO CSS (AGREGAR AL FINAL) --- */
+
+.logo-css {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+}
+
+.circulo-logo {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #2c3e50 0%, #000000 100%);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid #f1c40f; 
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    position: relative;
+}
+
+.letras-logo {
+    color: white !important;
+    font-family: 'Arial Black', sans-serif;
+    font-size: 22px;
+    line-height: 1;
+    letter-spacing: 1px;
+}
+
+.linea-decorativa {
+    width: 40px;
+    height: 2px;
+    background-color: #f1c40f;
+    margin: 2px 0;
+}
+
+.sub-logo {
+    color: #f1c40f !important;
+    font-family: 'Arial', sans-serif;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.header-profesional {
+    display: flex;
+    align-items: center;
+    border-bottom: 3px solid #2c3e50;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+/* --- FIN DE NUEVOS ESTILOS --- */
