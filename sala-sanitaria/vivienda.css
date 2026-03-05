@@ -286,3 +286,25 @@ body {
     font-style: italic;
 }
 }
+/* AJUSTES PARA CELULARES (MÓVILES) */
+@media (max-width: 600px) {
+    body {
+        padding: 10px; /* Reducimos espacio en los bordes para ganar pantalla */
+    }
+
+    .header-profesional {
+        flex-direction: column; /* Apila el logo y la info uno arriba del otro */
+        text-align: center;
+        gap: 10px;
+    }
+
+    .input-grid {
+        grid-template-columns: 1fr !important; /* Fuerza una sola columna en el celular */
+    }
+
+    .tabla-profesional {
+        display: block;
+        overflow-x: auto; /* Permite deslizar la tabla si es muy ancha */
+        width: 100%;
+    }
+}

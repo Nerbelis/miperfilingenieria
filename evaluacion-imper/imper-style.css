@@ -378,3 +378,33 @@ table thead th {
 .btn-reporte:hover {
     background-color: #218838;
 }
+/* --- OPTIMIZACIÓN MÓVIL FINAL --- */
+@media screen and (max-width: 768px) {
+    /* Ajusta el contenedor principal */
+    .container {
+        width: 95% !important;
+        padding: 10px;
+        margin: auto;
+    }
+
+    /* Manejo de secciones de entrada de datos */
+    .input-section, .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Evita que las tablas de cómputos métricos rompan el diseño */
+    table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+    }
+
+    /* Botones más fáciles de presionar en celular */
+    .btn, button {
+        width: 100%;
+        padding: 15px;
+        font-size: 16px;
+    }
+}
