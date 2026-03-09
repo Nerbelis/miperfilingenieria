@@ -1,5 +1,5 @@
 // Configuración de tu Google Sheets (Mantén tu URL aquí)
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwiWIIYa_LY51f9wAYy-bskQaOo5T1SShyM/exec';
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwiWIiiYa_LY5lf9wAYy-bskQaOo5TlSSHyNvD7-r3QvxUElNmQauh_LUr2kuGj2Ys3rw/exec';
 
 // Función para cargar la tasa del BCV automáticamente
 function obtenerTasaBCV() {
@@ -82,7 +82,7 @@ function registrarYEnviar() {
     });
 
     // Mensaje de WhatsApp mejorado con el neto en USD
-    var texto = 'NVR Exchange: Envío de $' + monto + ' USD.recibe neto: ' + recibirUSD + ' que equivalen a: ' + recibir;
+    var texto = 'NVR_exchange: Envío de $' + monto + ' USD.recibe neto: ' + recibirUSD + ' que equivalen a: ' + recibir;
     var urlWA = 'https://wa.me/16452040526?text=' + encodeURIComponent(texto);
     
     window.open(urlWA, '_blank');
