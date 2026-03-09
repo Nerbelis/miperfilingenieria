@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NVR Exchange</title>
+    <style>
+        :root {
+            --nvr-blue: #0f172a;
+            --nvr-gold: #fbbf24;
+        }
+        body {
+            font-family: sans-serif;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            width: 100%;
+            max-width: 400px;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+            border-top: 5px solid var(--nvr-blue);
+        }
+        .logo {
+            text-align: center;
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--nvr-blue);
+            margin-bottom: 1rem;
+        }
+        .logo span {
+            color: var(--nvr-gold);
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: var(--nvr-blue);
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+        .results {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+        .total {
+            font-weight: 800;
+            color: var(--nvr-blue);
+            font-size: 1.1rem;
+            border-top: 1px dashed #cbd5e1;
+            margin-top: 10px;
+            padding-top: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .btn-ws {
+            display: block;
+            width: 100%;
+            background: #25d366;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+        .btn-ws:hover {
+            background: #128c7e;
+        
+        }
+       
+    </style>
+    <style>
+        .footer-nvr {
+    margin-top: 25px; /* Espacio con el botón de WhatsApp */
+    padding-top: 15px; /* Espacio interno superior */
+    border-top: 1px solid #e0e0e0; /* Una línea divisoria suave */
+    text-align: center; /* Centra el texto */
+    font-size: 11px; /* Tamaño de fuente sutil */
+    color: #888; /* Color gris suave */
+}
+
+        .footer-nvr strong {
+    color: #555; /* Resalta un poco tu nombre */
+    font-weight: 600;
+} 
+</style>
+
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="logo">NVR <span>EXCHANGE</span></div>
+
+    <label for="montoUSD">Monto PayPal (USD)</label>
+    <input type="number" id="montoUSD" placeholder="0.00" onkeyup="calcular()">
+
+    <label for="tasaBCV">Tasa del Día (VES)</label>
+    <input type="number" id="tasaBCV" placeholder="Cargando tasa..." onkeyup="calcular()">
+
+    <div class="results">
+        <div class="total">
+            <span>Monto USD (Neto):</span>
+        <span id="netoUSDDisplay">0.00 USD</span>
+    </div>
+        <div class="total">
+            <span>Recibes en VES:</span>
+            <span id="totalVES">0.00 VES</span>
+        </div>
+    </div>
+
+    <a href="#" class="btn-ws" onclick="registrarYEnviar()">Confirmar por WhatsApp</a>
+    <footer class="footer-nvr">
+        <p>© 2026 Elaborado por <strong>Ing. Civil e Informático Nerbelis Valdeblanques</strong>
+             | @NVR_Exchange</p>
+    </footer>
+</div>
+
+<script src="nvr.js"></script>
+
+
+</div> 
+</body>
+</html>
