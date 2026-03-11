@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>SISTEMA DE EVALUACION ANTROPOMETRICA - INN</title>
+    <style>
+        body {
+            background-color: #0f1113;
+            color: #d1d4d7;
+            font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .contenedor-profesional {
+            background-color: #1a1d21;
+            width: 100%;
+            max-width: 460px;
+            padding: 35px;
+            border: 1px solid #31363c;
+            border-top: 4px solid #0056b3;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+            border-radius: 2px;
+        }
+
+        /* TITULO NIVEL INGENIERIA */
+        .titulo-principal {
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            text-align: center;
+            letter-spacing: 1.5px;
+        }
+
+        .subtitulo-tecnico {
+            color: #008cff;
+            font-size: 11px;
+            text-align: center;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+
+        .bloque-entrada {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            font-size: 11px;
+            color: #7a828a;
+            margin-bottom: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        input, select {
+            width: 100%;
+            background-color: #111418;
+            border: 1px solid #3c444d;
+            color: #ffffff;
+            padding: 12px;
+            border-radius: 3px;
+            box-sizing: border-box;
+            font-size: 14px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #008cff;
+        }
+
+        .boton-ejecutar {
+            width: 100%;
+            background-color: #0056b3;
+            color: #ffffff;
+            border: none;
+            padding: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+
+        .boton-ejecutar:hover {
+            background-color: #007bff;
+        }
+
+        #panel-resultados {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #0a0c0e;
+            border: 1px solid #0056b3;
+            display: none;
+            text-align: center;
+        }
+
+        .num-imc {
+            color: #00ff88;
+            font-size: 32px;
+            font-weight: 700;
+            margin: 5px 0;
+        }
+
+        .aviso-legal {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #241d08;
+            border: 1px solid #856404;
+            border-radius: 3px;
+            font-size: 10.5px;
+            color: #d4d4d4;
+            line-height: 1.6;
+            text-align: justify;
+        }
+
+        .aviso-legal strong {
+            color: #ffc107;
+        }
+
+        .pie-ingenieria {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #31363c;
+            text-align: center;
+            font-size: 11px;
+            color: #5d666f;
+            line-height: 1.8;
+        }
+
+        .pie-ingenieria span {
+            color: #9da5ad;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor-profesional">
+    <div class="titulo-principal">ANALISIS BIOMETRICO V1.2</div>
+    <div class="subtitulo-tecnico">MODULO DE EVALUACION NUTRICIONAL - INN</div>
+
+    <div class="bloque-entrada">
+        <label>PARAMETRO DE GENERO</label>
+        <select id="val_genero">
+            <option value="F">FEMENINO (MUJER)</option>
+            <option value="M">MASCULINO (HOMBRE)</option>
+        </select>
+    </div>
+
+    <div class="bloque-entrada">
+        <label>MASA CORPORAL (KG)</label>
+        <input type="number" id="val_peso" step="0.1" placeholder="0.0">
+    </div>
+
+    <div class="bloque-entrada">
+        <label>ESTATURA TOTAL (CM)</label>
+        <input type="number" id="val_estatura" placeholder="0">
+    </div>
+
+    <button class="boton-ejecutar" onclick="procesarAnalisis()">Procesar Datos</button>
+
+    <div id="panel-resultados">
+        <label>INDICE DE MASA CORPORAL (IMC)</label>
+        <div id="out_imc" class="num-imc">0.0</div>
+        <label>ESTADO NUTRICIONAL DIAGNOSTICADO</label>
+        <div id="out_estado" style="font-size: 18px; font-weight: bold; margin-top: 5px;">---</div>
+    </div>
+
+    <div class="aviso-legal">
+        <strong>DESCARGO DE RESPONSABILIDAD:</strong> Este software es una herramienta de calculo informativo basada en los estandares del 
+        <strong>Instituto Nacional de Nutricion (INN)</strong>. Los resultados presentados no deben tomarse como un diagnostico clinico definitivo ni sustituyen la consulta con un profesional de la salud calificado.
+    </div>
+
+    <div class="pie-ingenieria">
+        &copy; 2026 software Desarrollado por:<br>
+        <span>Ing.Civil e Informatico Nerbelis Valdeblanques</span><br>
+    </div>
+</div>
+
+<script>
+    function procesarAnalisis() {
+        var p = document.getElementById("val_peso").value;
+        var e = document.getElementById("val_estatura").value;
+        var panel = document.getElementById("panel-resultados");
+
+        if (p > 0 && e > 0) {
+            var m = e / 100;
+            var imc = p / (m * m);
+            var imc_final = imc.toFixed(2);
+            
+            document.getElementById("out_imc").innerHTML = imc_final;
+            
+            var est = "";
+            var col = "";
+
+            if (imc < 18.5) {
+                est = "BAJO PESO";
+                col = "#ffcc00";
+            } else if (imc >= 18.5 && imc <= 24.99) {
+                est = "NORMAL (EUTROFICO)";
+                col = "#00ff88";
+            } else if (imc >= 25.0 && imc <= 29.99) {
+                est = "SOBREPESO (PRE-OBESIDAD)";
+                col = "#ff9900";
+            } else {
+                est = "OBESIDAD CLINICA";
+                col = "#ff4444";
+            }
+
+            var txtEstado = document.getElementById("out_estado");
+            txtEstado.innerHTML = est;
+            txtEstado.style.color = col;
+            panel.style.display = "block";
+        } else {
+            alert("Error: Ingrese parametros de entrada validos.");
+        }
+    }
+</script>
+
+</body>
+</html>
