@@ -26,9 +26,9 @@ function calcular() {
     var monto = parseFloat(montoInput) || 0;
     var tasa = parseFloat(tasaInput) || 0;
 
-    // Lógica NVR: Comisión PayPal (5.4% + 0.30) + Tu Ganancia (11%)
+    // Lógica NVR: Comisión PayPal (5.4% + 0.30) + Tu Ganancia (13%)
     var costoPaypal = (monto * 0.054) + (monto > 0 ? 0.30 : 0);
-    var gananciaNvr = monto * 0.11;
+    var gananciaNvr = monto * 0.13;
     
     // Cálculo de montos finales
     var netoUSD = monto - costoPaypal - gananciaNvr;
