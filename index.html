@@ -3,31 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nercovalch</title>
+    <title>Tu Nombre / Custom Website Developer & Software Engineer</title>
+    <meta name="description" content="Desarrollo web a la medida, sistemas full-stack, PHP, JavaScript y soluciones digitales optimizadas.">
+    <!-- Aquí vincularemos los estilos CSS más adelante -->
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-     <script type="text/javascript">
-        document.addEventListener('contextmenu', event => event.preventDefault());
-        document.addEventListener('selectstart', event => event.preventDefault());
-    </script>
 </head>
 <body>
-    <header class="site-header">
-        <div class="container">
-           <img src="foto de nerbelis.jpg" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 2px solid white;">
-            
-            <h1 id="nombre">Nerbelis C. Valdeblanques de Romero</h1>
-            <p class="subtitle" id="titulo-sub">Civil and Informatics Engineer — Maracaibo, Venezuela</p>
-            <p class="description" id="bio">Apasionada por la Integracion de Soluciones Informaticas Avanzadas
-                en el diseño y ejecucion de Obras Civiles.</p>
-            
-       <div class="skills-container" id="lista-habilidades">
-            <span class="tag">AUTOMATIZACIÓN DE PROCESOS</span>
-            <span class="tag">DESARROLLADOR FRONTEND JUNIOR</span>
-            <span class="tag">DISEÑO DE PAGINAS WEB</span>
-            <span class="tag">IA APLICADA A LA CONSTRUCCIÓN</span>
-            <span class="tag">CÁLCULO ESTRUCTURAL COMPUTARIZADO</span>
+
+    <!-- Cabecera y Navegación -->
+    <header>
+        <div class="logo">
+             <a href="#inicio"><img src="logo.png" alt="Mi Logo" style="height: 40px;"></a>
         </div>
+        <nav>
+            <ul>
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#sobre-mi">Sobre Mí</a></li>
+                <li><a href="#servicios">Servicios</a></li>
+                <li><a href="#portafolio">Portafolio</a></li>
+                <li><a href="#contacto" class="btn-nav">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- 1. Hero Section -->
+    <section id="inicio" class="hero">
+        <div class="hero-content">
+            <h1>Desarrollo Web a la Medida</h1>
+            <p>Transformo tus ideas en plataformas digitales rápidas, seguras y escalables, sin plantillas genéricas.</p>
+            <div class="hero-buttons">
+                <a href="#portafolio" class="btn-primary">Ver Proyectos</a>
+                <a href="#contacto" class="btn-secondary">Solicitar Cotización</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. Propuesta de Valor -->
+    <section id="sobre-mi" class="value-prop">
+        <h2>¿Por qué elegir un desarrollo personalizado?</h2>
+        <div class="grid-cards">
+            <div class="card">
+                <h3>Rendimiento Extremo</h3>
+                <p>Código limpio y optimizado para garantizar tiempos de carga ultra rápidos y una experiencia fluida.</p>
+            </div>
+            <div class="card">
+                <h3>Escalabilidad Total</h3>
+                <p>Sistemas diseñados desde la arquitectura base para crecer al mismo ritmo que tu negocio.</p>
+            </div>
+            <div class="card">
+                <h3>Control y Seguridad</h3>
+                <p>Sin dependencias ocultas de plugins pesados o vulnerabilidades de terceros.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Servicios Ofrecidos -->
+    <section id="servicios" class="services">
+        <h2>Servicios Profesionales</h2>
+        <div class="grid-services">
+            <div class="service-item">
+                <h3>Desarrollo Web Full-Stack</h3>
+                <p>Creación de sitios web corporativos, landing pages y aplicaciones web desde cero utilizando PHP, JavaScript y MySQL.</p>
+            </div>
+            <div class="service-item">
+                <h3>Sistemas y Dashboards a Medida</h3>
+                <p>Paneles administrativos, calculadoras técnicas y automatización de procesos internos adaptados a tus requerimientos.</p>
+            </div>
+            <div class="service-item">
+                <h3>Optimización y Refactorización</h3>
+                <p>Mejora de velocidad, seguridad, reestructuración y mantenimiento de plataformas web ya existentes.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Portafolio / Casos de Éxito -->
+    <section id="portafolio" class="portfolio">
+        <h2>Portafolio de Proyectos</h2>
+        <div class="grid-portfolio">
+            <div class="portfolio-card">
+                <h3>Sistema de Gestión y Automatización</h3>
+                <p>Plataforma web dinámica desarrollada con PHP y MySQL para control de procesos y registros.</p>
+                <span class="tech-tag">PHP</span> <span class="tech-tag">MySQL</span> <span class="tech-tag">JavaScript</span>
+            </div>
+            <div class="portfolio-card">
+                <h3>Calculadora Técnica Especializada</h3>
+                <p>Módulo de cálculo automatizado bajo normativas técnicas y procesamiento de datos en tiempo real.</p>
+                <span class="tech-tag">HTML5</span> <span class="tech-tag">CSS3</span> <span class="tech-tag">JavaScript</span>
+            </div>
+            <div class="portfolio-card">
+                <h3>Sitio Web Corporativo Personalizado</h3>
+                <p>Interfaz optimizada para conversión, diseño responsivo y despliegue continuo en la nube.</p>
+                <span class="tech-tag">Frontend</span> <span class="tech-tag">Netlify</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stack Tecnológico -->
+    <section class="tech-stack">
+        <h2>Stack Tecnológico</h2>
+        <p>Frontend: HTML5, CSS3, JavaScript | Backend: PHP | Bases de Datos: MySQL | Control y Despliegue: Git, GitHub, Netlify</p>
+    </section>
+
         <div class="proyectos-container" style="margin-top: 20px; text-align: center;">
     <h2 style="color: #333;">Proyectos Recientes</h2>
         
