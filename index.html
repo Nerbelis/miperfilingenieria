@@ -140,18 +140,15 @@
     <div class="contacto-container">
     <h2>Contacto</h2>
     <p>Si tienes preguntas o deseas trabajar con nosotros, no dudes en contactarnos.</p>
-    <form action="https://formsubmit.co/el/micela" method="POST">
-    <!-- Configuración para evitar captchas y personalizar la respuesta -->
-    <input type="hidden" name="_captcha" value="false">
-    <input type="hidden" name="_template" value="table">
-    
-    <!-- Tus campos de siempre -->
+    <form name="contacto" method="POST" netlify>
+    <!-- Tus campos -->
     <input type="text" name="nombre" placeholder="Tu Nombre" required style="display:block; margin-bottom:10px; width:100%;">
     <input type="email" name="email" placeholder="Tu Correo" required style="display:block; margin-bottom:10px; width:100%;">
-    <textarea name="mensaje" placeholder="¿Qué software o proyecto necesitas?" style="display:block; margin-bottom:10px; width:100%;"></textarea>
-    
+    <textarea name="mensaje" placeholder="¿Qué software o proyecto necesitas?" required style="display:block; margin-bottom:10px; width:100%;"></textarea>
+
+    <!-- Botón de envío -->
     <button type="submit" class="btn-contacto" style="padding:10px; border:none; cursor:pointer;">Enviar correo</button>
-    </form>
+</form>
      </div>
     </header>        
    <div style="text-align: center; margin: 40px 0;">
