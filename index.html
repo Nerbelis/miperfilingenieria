@@ -157,7 +157,10 @@
     <div class="contacto-container">
     <h2>Contacto</h2>
     <p>Si tienes preguntas o deseas trabajar con nosotros, no dudes en contactarnos.</p>
-    <form name="contacto" method="POST" netlify>
+     <form name="contacto" method="POST" data-netlify="true" action="/gracias.html">
+  <input type="hidden" name="form-name" value="contacto">
+  <!-- Tus campos actuales de nombre, email y mensaje -->
+</form>
     <!-- Tus campos -->
     <input type="text" name="nombre" placeholder="Tu Nombre" required style="display:block; margin-bottom:10px; width:100%;">
     <input type="email" name="email" placeholder="Tu Correo" required style="display:block; margin-bottom:10px; width:100%;">
