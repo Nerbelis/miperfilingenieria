@@ -216,5 +216,23 @@
     </div>
 
     </footer>
+    <script>
+    // Bloquear clic derecho
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+    });
+
+    // Bloquear combinaciones de teclas para inspeccionar código (F12, Ctrl+Shift+I, Ctrl+U, etc.)
+    document.addEventListener('keydown', function(e) {
+        if (
+            e.keyCode == 123 || // F12
+            (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || // Ctrl+Shift+I / J
+            (e.ctrlKey && e.keyCode == 85) // Ctrl+U (Ver código fuente)
+        ) {
+            e.preventDefault();
+            return false;
+        }
+    });
+</script>
 </body>
 </html>
