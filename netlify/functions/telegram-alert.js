@@ -7,16 +7,18 @@ exports.handler = async function(event, context) {
 
     try {
         const bodyData = JSON.parse(event.body || '{}');
-        const payload = bodyData.payload || {};
-        const formData = payload.data || {};
+        
+        // Netlify envía los campos del formulario directamente dentro de la propiedad 'data'
+        const formData = bodyData.data || bodyData;
 
         const TOKEN = "8705847621:AAFwpWtjqL_aodD87jsEQMv3YrmBF3e6gAA";
         const CHAT_ID = "1526051706";
 
-        const nombre = formData.nombre || formData.name || "Sin nombre";
+        // Capturamos los campos probando distintas combinaciones de nombres comunes
+        const nombre = formData.nombre || formData.name || formData.cliente || "Sin nombre";
         const email = formData.email || formData.correo || "Sin correo";
-        const asunto = formData.asunto || formData.subject || "Nuevo mensaje web";
-        const mensajeTexto = formData.mensaje || formData.message || formData.comentario || "Sin mensaje";
+        const asunto = formData.asunto || formData.subject || formData.nivel || "Nuevo mensaje web";
+        const mensajeTexto = formData.mensaje || formData.message || formData.comentario || formData.text || "Sin mensaje";
 
         const textoTelegram = "📩 ¡NUEVO MENSAJE DESDE LA WEB!\n\n" +
                               "👤 De: " + nombre + "\n" +
