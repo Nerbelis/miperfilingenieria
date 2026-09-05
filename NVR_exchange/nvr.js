@@ -1,22 +1,30 @@
 // Configuración de tu Google Sheets (Mantén tu URL aquí)
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwiWIiiYa_LY5lf9wAYy-bskQaOo5TlSSHyNvD7-r3QvxUElNmQauh_LUr2kuGj2Ys3rw/exec';
 
-// Función para cargar la tasa del BCV automáticamente
 function obtenerTasaBCV() {
-    var urlTasa = 'https://ve.dolarapi.com/v1/dolares/oficial';
+    var urlTasa = 'https://rates.dolarvzla.com/bcv/current.json';
 
     fetch(urlTasa)
         .then(function(res) { return res.json(); })
         .then(function(data) {
-            if (data && data.promedio) {
-                var inputTasa = document.getElementById('tasaBCV');
-                inputTasa.value = data.promedio;
-                calcular(); // Calcula el total automáticamente al cargar la tasa
+            console.log("Datos recibidos de la API:", data); // Esto te mostrará el resultado en F12 -> Console
+            
+            var tasaOficial = data.current && data.current.usd ? data.current.usd : (data.usd || data.promedio);
+
+            if (tasaOficial) {
+                // Buscamos el input probando ambas variantes de ID por seguridad
+                var inputTasa = document.getElementById('tasabcv') || document.getElementById('tasaBCV');
+                
+                if (inputTasa) {
+                    inputTasa.value = tasaOficial;
+                    calcular(); 
+                } else {
+                    console.log("No se encontró el elemento input de la tasa en el HTML.");
+                }
             }
         })
-        .catch(function(err) { console.log('Error cargando tasa: ' + err); });
+        .catch(function(err) { console.log('Error cargando tasa BCV: ' + err); });
 }
-
 // Función principal de cálculo
 function calcular() {
     // Obtenemos los valores de los IDs del HTML
@@ -28,7 +36,7 @@ function calcular() {
 
     // Lógica NVR: Comisión PayPal (5.4% + 0.30) + Tu Ganancia (13%)
     var costoPaypal = (monto * 0.054) + (monto > 0 ? 0.30 : 0);
-    var gananciaNvr = monto * 0.13;
+    var gananciaNvr = monto * 0.14;
     
     // Cálculo de montos finales
     var netoUSD = monto - costoPaypal - gananciaNvr;
